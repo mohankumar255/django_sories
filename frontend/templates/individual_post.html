@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ post.post_title }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f9f9f9;
+      color: #333;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    .post-title {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+    .post-meta {
+      font-size: 0.9em;
+      color: #777;
+    }
+    .post-image {
+      max-width: 100%;
+      margin: 20px 0;
+    }
+    .comment {
+      background: #f2f2f2;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+    }
+    .comment strong {
+      color: #333;
+    }
+    .comment-form textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+    }
+    .comment-form button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .comment-form button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="bg-white shadow-md p-4">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-bold text-gray-800">My Website</h1>
+    </div>
+  </header>
+
+  <!-- Refine Mode Panel -->
+  <div class="max-w-6xl mx-auto mt-4 px-4">
+    <div class="bg-white shadow-md p-4 rounded-lg">
+      <h2 class="text-lg font-semibold text-gray-700 mb-3">Refine Content</h2>
+      <div class="grid md:grid-cols-3 gap-4 items-center">
+        <input id="findText" type="text" placeholder="Find word"
+               class="border border-gray-300 rounded px-4 py-2 w-full focus:ring focus:border-blue-500" />
+        <input id="replaceText" type="text" placeholder="Replace with"
+               class="border border-gray-300 rounded px-4 py-2 w-full focus:ring focus:border-blue-500" />
+        <button onclick="refineText()" class="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 w-full">
+          Replace
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function refineText() {
+      const find = document.getElementById("findText").value.trim();
+      const replace = document.getElementById("replaceText").value;
+      const caseSensitive = document.getElementById("caseSensitive").checked;
+
+      if (!find) {
+        alert("Please enter a word to find.");
+        return;
+      }
+
+      const flags = caseSensitive ? "g" : "gi";
+      const regex = new RegExp(find, flags);
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+      let node;
+      while ((node = walker.nextNode())) {
+        node.nodeValue = node.nodeValue.replace(regex, replace);
+      }
+    }
+  </script>
+
+  <!-- Main Content -->
+  <div class="container mt-6">
+    <div class="post">
+<aside class="bg-white p-6 rounded shadow">
+  <h3 class="text-lg font-bold mb-4 text-gray-800 border-b pb-2">Categories</h3>
+  <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 text-blue-600">
+    {% for key,item in categories.items %}
+      <li><a href="{% url 'categories' item%}" class="hover:underline block px-3 py-1 bg-blue-100 rounded text-center">{{key}}</a></li>
+{%endfor%}
+  </ul>
+</aside>
+
+
+
+      <div class="post-title" id="title">{{ post.post_title }}</div>
+      <div class="post-meta">By {{ post.user_id.username }} | {{ post.created_at }}</div>
+      {% if post.image_url %}
+      <img class="post-image" src="{{ post.image_url }}" alt="Post image">
+      {% endif %}
+
+      <p id="read_content">{{ read_story |safe }}</p>
+    </div>
+
+    <hr>
+
+    <h3>Reader Comments</h3>
+    {% for comment in post.comments %}
+      <div class="comment">
+        <strong>{{ comment.user_id.username }}</strong> said:<br>
+        {{ comment.description |safe }}<br>
+        <small>{{ comment.created_at }}</small>
+      </div>
+    {% empty %}
+      <p>No comments yet. Be the first to write!</p>
+    {% endfor %}
+    {% include "tags.html" with posts=post %}
+
+    <hr>
+    <h3>Continue the Story or Share a Thought</h3>
+  </div>
+
+</body>
+</html>

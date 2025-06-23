@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home - MySocialApp</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+    }
+    header {
+      background: #4267B2;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+    aside {
+      width: 250px;
+      background: #fff;
+      padding: 1rem;
+      border-right: 1px solid #ccc;
+    }
+    aside ul {
+      list-style: none;
+      padding: 0;
+    }
+    aside ul li {
+      margin: 1rem 0;
+    }
+    aside ul li a {
+      text-decoration: none;
+      color: #333;
+    }
+    main {
+      flex: 1;
+      padding: 1rem;
+    }
+    .welcome {
+      background: white;
+      padding: 2rem;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .welcome h2 {
+      margin-top: 0;
+    }
+    .quick-actions {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .action-btn {
+      background: #4267B2;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .action-btn:hover {
+      background: #365899;
+    }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      aside {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    MySocialApp
+  </header>
+  <div class="container">
+    <aside>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Messages</a></li>
+        <li><a href="#">Friends</a></li>
+        <li><a href="#">Profile</a></li>
+        <li><a href="#">Settings</a></li>
+      </ul>
+    </aside>
+    <main>
+      <div class="welcome">
+        <h2>Welcome to MySocialApp</h2>
+        <p>Connect with friends, share your moments, and explore what's new.</p>
+        <div class="quick-actions">
+          <a href="{% url 'create_post' %}" class="action-btn">Create Post</a>
+          <a href="{%url 'showfeed' %}" class="action-btn">View Feed</a>
+          <a href="#" class="action-btn">Find Friends</a>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

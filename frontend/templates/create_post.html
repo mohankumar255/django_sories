@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Post</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      padding: 2rem;
+    }
+    .form-container {
+      background: white;
+      padding: 2rem;
+      max-width: 500px;
+      margin: auto;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    .form-container h2 {
+      margin-top: 0;
+    }
+    .form-container input[type="text"],
+    .form-container textarea {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .form-container button {
+      background-color: #4267B2;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .form-container button:hover {
+      background-color: #365899;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Create a New Post</h2>
+    <form method="POST">
+  {% csrf_token %}
+  {% for field in data %}
+    <div>
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}
+        <div style="color: red;">{{ field.errors }}</div>
+      {% endif %}
+    </div>
+  {% endfor %}
+  <button type="submit">Submit</button>
+</form>
+
+  </div>
+</body>
+</html>
