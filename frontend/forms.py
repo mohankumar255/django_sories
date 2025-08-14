@@ -8,7 +8,6 @@ class Createpostform(ModelForm):
         fields = '__all__'
 
 
-
 class CreateCommentform(ModelForm):
     class Meta:
         model = CreateComment

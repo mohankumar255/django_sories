@@ -4,22 +4,22 @@ from django.db import models
 import uuid
 from django.contrib.auth.models import User
 
+import uuid
+from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
 class CreatePost(models.Model):
-    user_name = models.CharField(default='Mohan')
-    #id = models.CharField(default=uuid.uuid4())
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    email = models.CharField(max_length=100, default='Mohan')
+    category = models.CharField(max_length=50,default='sex kathalu')
     post_id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     post_title = models.CharField(max_length=100)
     description = models.TextField()
-    models.DateTimeField(auto_now_add=True)
-    #image = models.ImageField(upload_to='uploads/', null=True, blank=True)
-    image_url = models.URLField(null=True)
+    image_url = models.URLField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return 'Post title {0}'.format(self.post_title)
+        return f"Post title: {self.post_title}"
 
 class CreateComment(models.Model):
     models.DateTimeField(auto_now_add=True)

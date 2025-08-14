@@ -1,114 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Home - MySocialApp</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f0f2f5;
-    }
-    header {
-      background: #4267B2;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      font-size: 1.5rem;
-    }
-    .container {
-      display: flex;
-      min-height: 100vh;
-    }
-    aside {
-      width: 250px;
-      background: #fff;
-      padding: 1rem;
-      border-right: 1px solid #ccc;
-    }
-    aside ul {
-      list-style: none;
-      padding: 0;
-    }
-    aside ul li {
-      margin: 1rem 0;
-    }
-    aside ul li a {
-      text-decoration: none;
-      color: #333;
-    }
-    main {
-      flex: 1;
-      padding: 1rem;
-    }
-    .welcome {
-      background: white;
-      padding: 2rem;
-      border-radius: 6px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-    .welcome h2 {
-      margin-top: 0;
-    }
-    .quick-actions {
-      margin-top: 2rem;
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .action-btn {
-      background: #4267B2;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.3s;
-    }
-    .action-btn:hover {
-      background: #365899;
-    }
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-      }
-      aside {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #ccc;
-      }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    MySocialApp
-  </header>
-  <div class="container">
-    <aside>
-      <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Messages</a></li>
-        <li><a href="#">Friends</a></li>
-        <li><a href="#">Profile</a></li>
-        <li><a href="#">Settings</a></li>
-      </ul>
-    </aside>
-    <main>
-      <div class="welcome">
-        <h2>Welcome to MySocialApp</h2>
-        <p>Connect with friends, share your moments, and explore what's new.</p>
-        <div class="quick-actions">
-          <a href="{% url 'create_post' %}" class="action-btn">Create Post</a>
-          <a href="{%url 'showfeed' %}" class="action-btn">View Feed</a>
-          <a href="#" class="action-btn">Find Friends</a>
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Home - MySocialApp{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+  <!-- Hero Section -->
+  <section class="hero-section text-center text-white d-flex align-items-center"
+           style="background: url('{% static "images/social-bg.jpg" %}') no-repeat center center/cover; height: 70vh;">
+    <div class="container">
+      <h1 class="display-4 fw-bold"> <span class="text-primary"> Welcome to MySocialApp</span></h1>
+      <p class="lead mb-4">Connect with friends, share your moments, and explore what's new.</p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="{% url 'create_post' %}" class="btn btn-lg btn-primary px-4">Create Post</a>
+        <a href="{% url 'showfeed' %}" class="btn btn-lg btn-primary px-4">View Feed</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <div class="row text-center g-4">
+        <div class="col-md-4">
+          <div class="p-4 bg-white rounded shadow-sm h-100">
+            <i class="bi bi-pencil-square display-5 text-primary"></i>
+            <h5 class="mt-3">Create Your Posts</h5>
+            <p class="text-muted">Share your thoughts, photos, and updates with your friends instantly.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-4 bg-white rounded shadow-sm h-100">
+            <i class="bi bi-people-fill display-5 text-success"></i>
+            <h5 class="mt-3">Connect with Friends</h5>
+            <p class="text-muted">Stay in touch and build your network by adding and following friends.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-4 bg-white rounded shadow-sm h-100">
+            <i class="bi bi-newspaper display-5 text-warning"></i>
+            <h5 class="mt-3">Explore the Feed</h5>
+            <p class="text-muted">Discover new updates, trending posts, and exciting community stories.</p>
+          </div>
         </div>
       </div>
-    </main>
-  </div>
-</body>
-</html>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

@@ -48,9 +48,16 @@ like_json_file = 'media/likes_json_data.json'
 class userlist(generics.ListAPIView):
     queryset = CreatePost.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     pagination_class = PaginationClass
 
+    def get_queryset(self):
+        queryset = CreatePost.objects.all()
+        # Get query params
+        category = self.request.query_params.get('category')
+        if category:
+            queryset = queryset.filter(category=category)
+        return queryset
     #filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['price']  # Exact match filtering
     search_fields = ['name', 'description']  # Full-text search
@@ -78,6 +85,8 @@ class bulkdatacreation(generics.ListCreateAPIView):
             serializer.save()
 
 
+
+
 class Createcomment(generics.CreateAPIView):
     queryset = CreateComment.objects.all()
     serializer_class = CommentSerializer
@@ -94,15 +103,26 @@ class Createcomment(generics.CreateAPIView):
 class CreatePostView(generics.CreateAPIView):
     queryset = CreatePost.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     def create(self, request, *args, **kwargs):
-        serilizer = self.get_serializer(data = request.data)
-        serilizer.is_valid(raise_exception = True)
-        self.perform_create(serilizer)
-        return Response(serilizer.data)
-    def perform_create(self, serializer):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        serializer.save()
+        # Get validated data safely
+        post_title = serializer.validated_data.get('post_title')
+        description = serializer.validated_data.get('description')
+        post_instance = serializer.save()
+        post_id = str(post_instance.post_id)
+        # Sanitize file name
+        safe_title = "".join(c for c in post_title if c.isalnum() or c in (" ", "-", "_")).rstrip()
+        file_path = rf"C:\Users\mk302\Downloads\content_creater\all_stories\{post_id}.txt"
+
+        # Write description to file
+        with open(file_path, 'w', encoding='utf-8') as story_file:
+            description = description.replace('\r\n', '\n').replace('\r', '\n')
+            story_file.write(description)
+        return Response(serializer.data)
+
 #
 # class CreatePostView(generics.CreateAPIView):
 #     queryset = CreateComment.objects.all()
@@ -149,4 +169,10 @@ def save_tags(request, post_id, tag_name):
     data = json.dumps(data)
     write_data.write(data)
     write_data.close()
+    return Response(data)
+
+@api_view(['GET'])
+def get_all_categories(request):
+    queryset = CreatePost.objects.all()
+    data = {key.category:key.category for key in queryset}
     return Response(data)

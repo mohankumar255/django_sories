@@ -1,63 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Create Post</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f2f5;
-      padding: 2rem;
-    }
-    .form-container {
-      background: white;
-      padding: 2rem;
-      max-width: 500px;
-      margin: auto;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    }
-    .form-container h2 {
-      margin-top: 0;
-    }
-    .form-container input[type="text"],
-    .form-container textarea {
-      width: 100%;
-      padding: 0.75rem;
-      margin: 0.5rem 0 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .form-container button {
-      background-color: #4267B2;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .form-container button:hover {
-      background-color: #365899;
-    }
-  </style>
-</head>
-<body>
-  <div class="form-container">
-    <h2>Create a New Post</h2>
-    <form method="POST">
-  {% csrf_token %}
-  {% for field in data %}
-    <div>
-      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-      {{ field }}
-      {% if field.errors %}
-        <div style="color: red;">{{ field.errors }}</div>
-      {% endif %}
-    </div>
-  {% endfor %}
-  <button type="submit">Submit</button>
-</form>
+{% extends "base.html" %}
 
+{% block title %}Create Post{% endblock %}
+
+{% block extra_css %}
+<style>
+  body {
+    background: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
+    background-attachment: fixed;
+  }
+  .create-post-card {
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .file-upload {
+    border: 2px dashed #ccc;
+    padding: 1.5rem;
+    text-align: center;
+    border-radius: 6px;
+    background: #fafafa;
+    color: #888;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+  }
+  .file-upload:hover {
+    border-color: #0d6efd;
+    color: #0d6efd;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="card p-4 create-post-card col-md-8 offset-md-2">
+    <h2 class="text-center mb-4">Create a New Post</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label for="title" class="form-label">Post Title</label>
+        <input type="text" class="form-control" id="title" name="post_title" placeholder="Enter post title" required>
+      </div>
+
+
+      <div class="mb-3">
+        <label for="category" class="form-label">Your Category</label>
+        <input type="text" class="form-control" id="category" name="category" placeholder="Enter story category" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Your Email</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label">Post Content</label>
+        <textarea class="form-control" id="description" name="description" placeholder="Write your post..." rows="4" required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="image_url" class="form-label">Image URL</label>
+        <input type="url" class="form-control" id="image_url" name="image_url" placeholder="Enter image URL">
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Publish Post</button>
+    </form>
   </div>
-</body>
-</html>
+</div>
+{% endblock %}

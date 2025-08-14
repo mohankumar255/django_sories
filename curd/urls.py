@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (Createcomment,userlist,getsinglepost,deletepost,bulkdatacreation,
-                    save_tags,CreatePostView)
+                    save_tags,CreatePostView,get_all_categories)
 urlpatterns = [
     # path('get_data11',get_data),
     #path('create_post',create_post),
@@ -12,5 +12,6 @@ urlpatterns = [
     path('bulk_create/',bulkdatacreation.as_view()),
     path('create_comment/', Createcomment.as_view()),
     path('tags/<str:post_id>/<str:tag_name>',save_tags),
+    path('categories/', get_all_categories),
 
 ]

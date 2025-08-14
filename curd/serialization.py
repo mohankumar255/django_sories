@@ -22,8 +22,9 @@ class PostSerializer(ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     class Meta:
         model = CreatePost
-        fields = ['user','comments','post_id','created_at','post_title','description','image_url']
-        read_only_fields = ['post_id','user_id']
+        fields = '__all__'
+        # fields = ['user','comments','post_id','created_at','post_title','description','image_url']
+        # read_only_fields = ['post_id']
     def create(self, validated_data):
         validated_data['post_id'] = validated_data.get('post_id',uuid.uuid4())
         post = CreatePost.objects.create(**validated_data)
