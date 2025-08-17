@@ -19,6 +19,9 @@ from django.urls import path,include
 from curd import urls
 from frontend import urls as fe_url
 from rest_framework_simplejwt.views import TokenRefreshView , TokenObtainPairView
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,3 +31,5 @@ urlpatterns = [
     path('refresh_token/',TokenRefreshView.as_view())
 
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

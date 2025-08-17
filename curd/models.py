@@ -7,15 +7,25 @@ from django.contrib.auth.models import User
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
+import os
 
+def post_image_upload(instance, filename):
+    # get file extension (.jpg, .png etc.)
+    ext = filename.split('.')[-1]
+    # rename file to post_id.ext
+    filename = f"{instance.post_id}.{ext}"
+    # save in 'uploads/' folder
+    return os.path.join("uploads", filename)
 class CreatePost(models.Model):
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     email = models.CharField(max_length=100, default='Mohan')
-    category = models.CharField(max_length=50,default='sex kathalu')
+    category = models.CharField(max_length=50, default='sex kathalu')
     post_id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     post_title = models.CharField(max_length=100)
     description = models.TextField()
-    image_url = models.URLField(null=True, blank=True)
+
+    # Use ImageField instead of URLField
+    image = models.ImageField(upload_to=post_image_upload, null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

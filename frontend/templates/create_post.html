@@ -44,7 +44,6 @@
         <input type="text" class="form-control" id="title" name="post_title" placeholder="Enter post title" required>
       </div>
 
-
       <div class="mb-3">
         <label for="category" class="form-label">Your Category</label>
         <input type="text" class="form-control" id="category" name="category" placeholder="Enter story category" required>
@@ -56,13 +55,13 @@
       </div>
 
       <div class="mb-3">
-        <label for="description" class="form-label">Post Content</label>
-        <textarea class="form-control" id="description" name="description" placeholder="Write your post..." rows="4" required></textarea>
+        <label for="image" class="form-label">Upload Image</label>
+        <input type="file" name="image" id="image" class="form-control">
       </div>
 
       <div class="mb-3">
-        <label for="image_url" class="form-label">Image URL</label>
-        <input type="url" class="form-control" id="image_url" name="image_url" placeholder="Enter image URL">
+        <label for="description" class="form-label">Post Content</label>
+        <textarea class="form-control" id="description" name="description" placeholder="Write your post..." rows="4" required></textarea>
       </div>
 
       <button type="submit" class="btn btn-primary w-100">Publish Post</button>

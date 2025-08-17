@@ -57,9 +57,8 @@
   <div class="bg-white p-4 rounded shadow">
     <div class="post-title">{{ post.post_title }}</div>
     <div class="post-meta">By {{ post.user_id.username }} | {{ post.created_at }}</div>
-
-    {% if post.image_url %}
-      <img class="post-image" src="{{ post.image_url }}" alt="Post image">
+    {% if post.image %}
+      <img class="post-image" src="{{ post.image }}" alt="Post image">
     {% endif %}
 
     <p id="read_content">{{ read_story|safe|linebreaksbr }}</p>

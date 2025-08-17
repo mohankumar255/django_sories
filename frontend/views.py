@@ -16,9 +16,7 @@ like_json_file = 'media/likes_json_data.json'
 
 
 headers = {
-    'Authorization': '',
-    'Content-Type': 'application/json',
-}
+    'Authorization': ''}
 
 #
 # def login():
@@ -40,29 +38,43 @@ def get_all_cat(cat_name=None):
 
 def home(request):
     return TemplateResponse(request , 'home.html',{'catgeries':get_all_cat()})
-
-
 def create_post(request):
-    form_data = Createpostform(request.POST)
-    headers['Authorization']='Bearer '+loginapiview({'username':'mohan','password':'1234'})['access']
-    if request.method =='POST':
+    form_data = Createpostform(request.POST or None, request.FILES or None)
+    headers['Authorization'] = 'Bearer ' + loginapiview({'username': 'mohan', 'password': '1234'})['access']
+
+    if request.method == 'POST':
         if form_data.is_valid():
-            request_data = form_data.data.dict()
-            del request_data['csrfmiddlewaretoken']
-            api_data = requests.request(url=local_url+'api/v1/create_post/',
-                    headers=headers,method='post',data=(json.dumps(request_data)))
+            request_data = form_data.cleaned_data
+
+            # ✅ Handle image properly
+            files = {}
+            if "image" in request.FILES:
+                files["image"] = request.FILES["image"]
+
+            # Remove csrf token if present
+            request_data.pop("csrfmiddlewaretoken", None)
+            request_data.pop("image", None)  # remove image field from normal data
+
+            print("Files being sent:", files)
+            print("Data being sent:", request_data)
+
+            # ✅ Post to API (multipart/form-data)
+            api_data = requests.post(
+                url=local_url + 'api/v1/create_post/',
+                headers=headers,   # don’t set Content-Type
+                data=request_data, # text fields
+                files=files        # file field
+            )
+
             api_response = api_data.json()
-            data = open(like_json_file, 'r')
-            read_data = data.read()
-            data.close()
-            read_data = json.loads(read_data)
-            read_data[api_response['post_id']] = {'likes': 0, 'dislikes': 0}
-            data = open(like_json_file, 'w')
-            read_data = json.dumps(read_data)
-            write_data = data.write(read_data)
-            data.close()
-            return redirect(f'/view_single_post/{api_response['post_id']}')
-    return TemplateResponse(request,'create_post.html',{'data':form_data,'catgeries':get_all_cat()})
+            print("API Response:", api_response)
+
+            return redirect(f"/view_single_post/{api_response['post_id']}")
+
+    return TemplateResponse(request, 'create_post.html', {
+        'data': form_data,
+        'catgeries': get_all_cat()
+    })
 
 from django.core.paginator import Paginator
 

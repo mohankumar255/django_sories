@@ -99,10 +99,12 @@ class Createcomment(generics.CreateAPIView):
         return Response(serilizer.data)
     def perform_create(self, serializer):
         serializer.save()
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 class CreatePostView(generics.CreateAPIView):
     queryset = CreatePost.objects.all()
     serializer_class = PostSerializer
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     # permission_classes = [IsAuthenticated]
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -111,7 +113,12 @@ class CreatePostView(generics.CreateAPIView):
         # Get validated data safely
         post_title = serializer.validated_data.get('post_title')
         description = serializer.validated_data.get('description')
-        post_instance = serializer.save()
+        image_file = serializer.validated_data.get('image')
+
+        if image_file:
+            post_instance= serializer.save(image=image_file)
+        else:
+            post_instance = serializer.save()
         post_id = str(post_instance.post_id)
         # Sanitize file name
         safe_title = "".join(c for c in post_title if c.isalnum() or c in (" ", "-", "_")).rstrip()
