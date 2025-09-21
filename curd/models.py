@@ -19,33 +19,30 @@ def post_image_upload(instance, filename):
 class CreatePost(models.Model):
     email = models.CharField(max_length=100, default='Mohan')
     category = models.CharField(max_length=50, default='sex kathalu')
-    post_id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    post_id = models.CharField(default=str(uuid.uuid4), primary_key=True, editable=False)
     post_title = models.CharField(max_length=100)
     description = models.TextField()
-
     # Use ImageField instead of URLField
     image = models.ImageField(upload_to=post_image_upload, null=True, blank=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Post title: {self.post_title}"
 
 class CreateComment(models.Model):
-    models.DateTimeField(auto_now_add=True)
     comment_id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    post = models.ForeignKey(CreatePost,on_delete=models.CASCADE,related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    post = models.ForeignKey(CreatePost, on_delete=models.CASCADE, related_name='comments')
     description = models.TextField()
-    image_url = models.URLField(null=True)
+    image_url = models.URLField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return 'Comment ID {0}'.format(self.comment_id)
+        return f"Comment {self.comment_id} on {self.post.post_title}"
 
 class Tag_choices(models.Choices):
     defaul_tag = 'Like'
-    negative_tag = 'Deslike'
+    negative_tag = 'Dislike'
 
 
 class Tags(models.Model):

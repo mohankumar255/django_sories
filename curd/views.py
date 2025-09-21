@@ -1,6 +1,6 @@
 import json
 from django.db import transaction
-
+from new_api import settings
 from .models import User
 from django.shortcuts import render, redirect
 from django.template.response import TemplateResponse
@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from  rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from .models import CreatePost,CreateComment,Following,Followers,Tags
-from .serialization import PostSerializer,CommentSerializer,SaveTagsSerializer,FollowersSerializer,FollowingSerializer
+from .serialization import GETPostSerializer,PostSerializer,CommentSerializer,SaveTagsSerializer,FollowersSerializer,FollowingSerializer
 # Create your views here.
 from django.http import JsonResponse
 from rest_framework import generics
@@ -50,21 +50,28 @@ class userlist(generics.ListAPIView):
     serializer_class = PostSerializer
     # permission_classes = [IsAuthenticated]
     pagination_class = PaginationClass
-
     def get_queryset(self):
         queryset = CreatePost.objects.all()
         # Get query params
         category = self.request.query_params.get('category')
+        author = self.request.query_params.get('author')
         if category:
+            category= category.replace('-', ' ')
             queryset = queryset.filter(category=category)
+        elif author:
+            queryset = queryset.filter(email=author)
         return queryset
     #filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['price']  # Exact match filtering
     search_fields = ['name', 'description']  # Full-text search
+
+
+
+
 class getsinglepost(generics.RetrieveAPIView):
     queryset = CreatePost.objects.prefetch_related('comments')
     lookup_field = 'post_id'
-    serializer_class = PostSerializer
+    serializer_class = GETPostSerializer
 class deletepost(generics.DestroyAPIView):
     #permission_classes = [IsAuthenticated]
     queryset = CreatePost.objects.all()
@@ -83,24 +90,22 @@ class bulkdatacreation(generics.ListCreateAPIView):
             return Response(serilizer.data)
         def perform_create(self, serializer):
             serializer.save()
-
-
-
-
 class Createcomment(generics.CreateAPIView):
     queryset = CreateComment.objects.all()
     serializer_class = CommentSerializer
-    lookup_field = 'post_id'
     def create(self, request, *args, **kwargs):
-        #is_many = isinstance(request.data,list)
-        serilizer = self.get_serializer(data = request.data)
-        serilizer.is_valid(raise_exception = True)
-        self.perform_create(serilizer)
-        return Response(serilizer.data)
-    def perform_create(self, serializer):
-        serializer.save()
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+        post_id = kwargs.get("post_id")
+        data = request.data.copy()
+        data["post"] = post_id
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user if request.user.is_authenticated else None
+        serializer.save(user=user)
+        return Response(serializer.data)
 
+
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+import os
 class CreatePostView(generics.CreateAPIView):
     queryset = CreatePost.objects.all()
     serializer_class = PostSerializer
@@ -121,13 +126,16 @@ class CreatePostView(generics.CreateAPIView):
             post_instance = serializer.save()
         post_id = str(post_instance.post_id)
         # Sanitize file name
-        safe_title = "".join(c for c in post_title if c.isalnum() or c in (" ", "-", "_")).rstrip()
-        file_path = rf"C:\Users\mk302\Downloads\content_creater\all_stories\{post_id}.txt"
+        stories_dir = os.path.join(settings.MEDIA_ROOT, "stories")
+        os.makedirs(stories_dir, exist_ok=True)
 
-        # Write description to file
+        file_path = os.path.join(stories_dir, f"{post_id}.txt")
+        # Normalize newlines before saving
+        description = description.replace('\r\n', '\n').replace('\r', '\n')
+
         with open(file_path, 'w', encoding='utf-8') as story_file:
-            description = description.replace('\r\n', '\n').replace('\r', '\n')
             story_file.write(description)
+        # Write description to file
         return Response(serializer.data)
 
 #
@@ -144,9 +152,9 @@ class CreatePostView(generics.CreateAPIView):
 #         serializer.save()
 
 class GetPost(generics.RetrieveAPIView):
-    queryset = CreateComment.objects.all()
+    queryset = CreatePost.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     lookup_field = ['post_id']
     def create(self, request, *args, **kwargs):
         serilizer = self.get_serializer(data = request.data)
@@ -183,3 +191,9 @@ def get_all_categories(request):
     queryset = CreatePost.objects.all()
     data = {key.category:key.category for key in queryset}
     return Response(data)
+
+@api_view(['GET'])
+def get_all_stories_by_author(request,author):
+    queryset = CreatePost.objects.filter(email=author)
+    data = PostSerializer(queryset , many=True)
+    return Response(data.data)

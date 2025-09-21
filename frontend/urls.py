@@ -1,7 +1,7 @@
 from tkinter.font import names
 
 from django.urls import path
-from .views import feed,home,create_post,get_data_tags,delete_post,loginapiview,get_single_post
+from .views import feed,home,create_post,get_data_tags,delete_post,search_data,createcomment,loginapiview,get_single_post
 
 
 urlpatterns = [path('',home,name='home'),
@@ -12,4 +12,7 @@ urlpatterns = [path('',home,name='home'),
                path('delete_post/<str:pk>/',delete_post,name='delete_post'),
                path('login/', loginapiview),
                path('view_single_post/<str:pk>',get_single_post,name = 'view_single_post'),
+               path('create_comment/<uuid:pk>', createcomment, name='create_comment'),
+               path('search', search_data, name='search'),
+
                ]

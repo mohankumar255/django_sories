@@ -1,71 +1,290 @@
 {% extends "base.html" %}
 
-{% block title %}Create Post{% endblock %}
+{% block title %}Feed - MySocialApp{% endblock %}
+
+<!-- Font Awesome CDN for icons -->
+{% load static %}
 
 {% block extra_css %}
+<!-- Font Awesome CDN for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<link rel="stylesheet" href="{% static 'css/create_post.css' %}">
 <style>
   body {
-    background: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
-    background-attachment: fixed;
-  }
-  .create-post-card {
-    backdrop-filter: blur(12px);
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-  }
-  .file-upload {
-    border: 2px dashed #ccc;
-    padding: 1.5rem;
-    text-align: center;
-    border-radius: 6px;
-    background: #fafafa;
-    color: #888;
-    cursor: pointer;
-    transition: border-color 0.3s ease;
-  }
-  .file-upload:hover {
-    border-color: #0d6efd;
-    color: #0d6efd;
-  }
+  background: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1600&q=80')
+    no-repeat center center/cover;
+  background-attachment: fixed;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.create-post-card {
+  backdrop-filter: blur(20px);
+  background: linear-gradient(135deg, #d1c4fd 0%, #8fcafe 50%, #fce3ec 100%);
+  border-radius: 28px;
+  box-shadow:
+    0 12px 36px rgba(105, 89, 205, 0.4),
+    0 8px 30px rgba(251, 121, 138, 0.3),
+    0 4px 18px rgba(141, 196, 255, 0.3);
+  border: 2px solid #845ef7;
+  padding: 3rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.5s ease, background 0.5s ease;
+}
+
+.create-post-card:hover {
+  box-shadow:
+    0 18px 44px rgba(105, 89, 205, 0.8),
+    0 12px 36px rgba(251, 121, 138, 0.6),
+    0 6px 24px rgba(141, 196, 255, 0.5);
+  background: linear-gradient(135deg, #bc9cff 0%, #70bfff 50%, #fab1d6 100%);
+}
+
+.create-post-card::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: -70px; width: 280px; height: 280px;
+  background: radial-gradient(circle, #8c7bff 40%, transparent 65%);
+  opacity: .4;
+  z-index: 0;
+  filter: drop-shadow(0 0 15px #8c7bff);
+}
+
+.create-post-card::after {
+  content: '';
+  position: absolute;
+  bottom: -70px; right: -90px; width: 200px; height: 200px;
+  background: radial-gradient(circle, #ff8abf 30%, transparent 70%);
+  opacity: .38;
+  z-index: 0;
+  filter: drop-shadow(0 0 15px #ff8abf);
+}
+
+.create-post-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+h2 {
+  font-weight: 900;
+  color: #673ab7;
+  letter-spacing: 0.03em;
+  margin-bottom: 20px;
+  text-align: center;
+  text-shadow: 0 0 8px #9675ff;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #3f51b5;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  text-shadow: 0 0 3px #5558;
+}
+
+.form-label i {
+  margin-right: 10px;
+  font-size: 1.2rem;
+  color: #9575cd;
+  transition: color 0.3s ease;
+}
+
+.form-label:hover i {
+  color: #ff4081;
+}
+
+.form-control {
+  border: 2px solid #9575cd;
+  border-radius: 12px;
+  padding: 0.7rem 1.1rem;
+  font-size: 1rem;
+  box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.7);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #673ab7;
+  box-shadow: 0 0 12px 3px rgba(103, 58, 183, 0.5);
+  outline: none;
+}
+
+textarea.form-control {
+  resize: vertical;
+}
+
+.btn-custom {
+  background: linear-gradient(90deg, #ff4081, #673ab7);
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  padding: 1rem;
+  font-size: 1.2rem;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(255, 64, 129, 0.65);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  width: 100%;
+  letter-spacing: 0.05em;
+}
+
+.btn-custom:hover, .btn-custom:focus {
+  background: linear-gradient(90deg, #7e57c2, #ab47bc);
+  box-shadow: 0 8px 30px rgba(171, 71, 188, 0.85);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.file-upload {
+  border: 3px dashed #af7eff;
+  background: #f5f3ff;
+  color: #6a48c9;
+  border-radius: 18px;
+  transition: border-color 0.4s ease, color 0.4s ease;
+  font-weight: 600;
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.file-upload:hover {
+  border-color: #ff4081;
+  color: #ff4081;
+}
+.content-wrapper {
+  background-color: #d0e7ff; /* Light blue */
+  padding: 1.5rem;           /* Optional padding for spacing */
+  border-radius: 12px;       /* Optional rounded corners */
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2); /* Soft blue shadow */
+}
+
+
+.container,
+.container.my-5,
+.col-md-8.offset-md-2 {
+  background: transparent;
+  box-shadow: none;
+}
+.mb-3 {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  font-weight: 700;
+  color: #5a2a83; /* deep violet */
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-shadow: 0 0 5px #a87fff;
+}
+
+.form-label i {
+  color: #7b5acf; /* violet icon */
+  font-size: 1.3rem;
+  transition: color 0.3s;
+}
+
+.form-label:hover i {
+  color: #ff6f91; /* pink on hover */
+}
+.mb-3 {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  font-weight: 700;
+  color: #5a2a83; /* deep violet */
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-shadow: 0 0 5px #a87fff;
+}
+
+.form-label i {
+  color: #7b5acf; /* violet icon */
+  font-size: 1.3rem;
+  transition: color 0.3s;
+}
+
+.form-label:hover i {
+  color: #ff6f91; /* pink on hover */
+}
+
+input.form-control {
+  border: 2px solid #7b5acf;
+  border-radius: 14px;
+  padding: 0.65rem 1rem;
+  font-size: 1rem;
+  color: #3b2262;
+  background: #f6f3ff;
+  box-shadow: inset 0 1px 3px rgba(123, 90, 207, 0.3);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input.form-control:focus {
+  border-color: #d670a8;
+  box-shadow: 0 0 10px #d670a8;
+  outline: none;
+  background: #fff0f6;
+}
+
+datalist option {
+  background-color: #f3e5ff;
+  color: #5a2a83;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+datalist option:hover {
+  background-color: #d6bbfc;
+  color: #310e62;
+}
+
 </style>
+
+
 {% endblock %}
 
 {% block content %}
 <div class="container my-5">
-  <div class="card p-4 create-post-card col-md-8 offset-md-2">
-    <h2 class="text-center mb-4">Create a New Post</h2>
-
-    <form method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
-
-      <div class="mb-3">
-        <label for="title" class="form-label">Post Title</label>
-        <input type="text" class="form-control" id="title" name="post_title" placeholder="Enter post title" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="category" class="form-label">Your Category</label>
-        <input type="text" class="form-control" id="category" name="category" placeholder="Enter story category" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="email" class="form-label">Your Email</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="image" class="form-label">Upload Image</label>
-        <input type="file" name="image" id="image" class="form-control">
-      </div>
-
-      <div class="mb-3">
-        <label for="description" class="form-label">Post Content</label>
-        <textarea class="form-control" id="description" name="description" placeholder="Write your post..." rows="4" required></textarea>
-      </div>
-
-      <button type="submit" class="btn btn-primary w-100">Publish Post</button>
-    </form>
+  <div class="col-md-8 offset-md-2">
+    <div class="create-post-card">
+      <h2 class="text-center mb-4">Create a New Post</h2>
+      <form method="POST" enctype="multipart/form-data" action="{% url 'create_post' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="post_title" class="form-label"><i class="fa-solid fa-pen"></i>Post Title</label>
+          <input type="text" class="form-control" id="post_title" name="post_title" placeholder="Enter post title" required>
+        </div>
+        <div class="mb-3">
+          <label for="category" class="form-label"><i class="fa-solid fa-tags"></i>Category</label>
+          <input list="category-list" name="category" class="form-control mb-2" placeholder="Choose or add category" required>
+          <datalist id="category-list">
+            {% for category in categories %}
+              <option value="{{ category.name }}">
+            {% endfor %}
+          </datalist>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label"><i class="fa-solid fa-envelope"></i>Your Email</label>
+          <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+        </div>
+        <div class="mb-3">
+          <label for="image" class="form-label"><i class="fa-solid fa-image"></i>Upload Image</label>
+          <input type="file" name="image" id="image" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label"><i class="fa-solid fa-align-left"></i>Post Content</label>
+          <textarea class="form-control" id="description" name="description" placeholder="Write your post..." rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-custom w-100">Publish Post</button>
+      </form>
+    </div>
   </div>
 </div>
 {% endblock %}

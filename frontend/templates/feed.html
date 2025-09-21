@@ -4,6 +4,13 @@
 
 {% block extra_css %}
 <style>
+  .content-wrapper {
+  background-color: #d0e7ff; /* Light blue */
+  padding: 1.5rem;           /* Optional padding for spacing */
+  border-radius: 12px;       /* Optional rounded corners */
+  box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2); /* Soft blue shadow */
+}
+
   .card-img-top {
     height: 200px;
     object-fit: cover;
@@ -13,6 +20,14 @@
     background-color: #0d6efd;
     border-color: #0d6efd;
     color: white;
+  }
+  .author-link {
+    font-weight: 600;
+    color: #0d6efd !important;
+    text-decoration: none;
+  }
+  .author-link:hover {
+    text-decoration: underline;
   }
 </style>
 {% endblock %}
@@ -25,11 +40,25 @@
     {% for post in posts %}
       <div class="col-md-4 post-card">
         <div class="card h-100 shadow-sm border-0 d-flex flex-column">
+
+          <!-- Author -->
+          <div class="p-2">
+            <small class="text-muted">
+              By
+              <a href="{% url 'showfeed' %}?author={{ post.email }}" class="author-link">
+                {{ post.email }}
+              </a>
+            </small>
+          </div>
+
+          <!-- Image -->
           <img src="{{ post.image }}" class="card-img-top" alt="{{ post.post_title }}" />
+
+          <!-- Body -->
           <div class="card-body d-flex flex-column">
             <h5 class="card-title">{{ post.post_title }}</h5>
             <p class="card-text text-muted">
-              {{ post.description|safe|truncatewords:20 }}
+              {{ post.description|safe }}
             </p>
             <div class="mt-auto">
               <a href="{% url 'view_single_post' post.post_id %}"
@@ -47,52 +76,45 @@
   </div>
 
   <!-- Pagination controls -->
-    <nav aria-label="Page navigation" class="mt-4 d-flex justify-content-center">
-      <ul class="pagination">
+  <nav aria-label="Page navigation" class="mt-4 d-flex justify-content-center">
+    <ul class="pagination">
+      <!-- Previous -->
+      {% if previous %}
+        <li class="page-item">
+          <a class="page-link"
+             href="?page={{ previous }}{% if category %}&category={{ category }}{% endif %}{% if author %}&author={{ author }}{% endif %}">
+             Previous
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+      {% endif %}
 
-        <!-- Previous Page -->
-        {% if previous %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ previous }}">Previous</a>
-          </li>
-        {% else %}
-          <li class="page-item disabled"><span class="page-link">Previous</span></li>
-        {% endif %}
+      <!-- Current -->
+      <li class="page-item active"><span class="page-link">{{ current }}</span></li>
 
-        <!-- Current Page -->
-        <li class="page-item active"><span class="page-link">{{ current }}</span></li>
+      <!-- Next -->
+      {% if next %}
+        <li class="page-item">
+          <a class="page-link"
+             href="?page={{ next }}{% if category %}&category={{ category }}{% endif %}{% if author %}&author={{ author }}{% endif %}">
+             Next
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Next</span></li>
+      {% endif %}
 
-        <!-- Next Page -->
-        {% if next %}
-          <li class="page-item">
-            {%if category%}
-            <a class="page-link" href="?page={{ next }}&category={{category}}">Next</a>
-            {%else%}
-                        <a class="page-link" href="?page={{ next }}">Next</a>
-
-            {%endif%}
-          </li>
-        {% else %}
-          <li class="page-item disabled"><span class="page-link">Next</span></li>
-        {% endif %}
-        <!-- Last Page -->
-        {% if last_page > current %}
-          <li class="page-item">
-
-            {%if category%}
-            <a class="page-link" href="?page={{ last_page }}&category={{category}}">...{{ last_page }}
-</a>
-            {%else%}
-                        <a class="page-link" href="?page={{ last_page }}">...{{ last_page }}
-</a>
-
-            {%endif%}
-
-
-          </li>
-        {% endif %}
-
-      </ul>
-    </nav>
+      <!-- Last -->
+      {% if last_page > current %}
+        <li class="page-item">
+          <a class="page-link"
+             href="?page={{ last_page }}{% if category %}&category={{ category }}{% endif %}{% if author %}&author={{ author }}{% endif %}">
+             ...{{ last_page }}
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
 </div>
 {% endblock %}
